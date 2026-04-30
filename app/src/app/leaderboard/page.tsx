@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createClient } from '@/lib/supabase'
 import type { Player, Team, Round } from '@/lib/types'
 
-// --- Mock Data ---
+// --- Mock Data (fallback) ---
 
 const mockPlayers: Player[] = [
   { id: 'p1', name: 'S.Kilroy', handicap: 12, created_at: '' },
@@ -40,11 +41,6 @@ const mockTeams: Team[] = [
   { id: 't12', round_id: 'r3', player1_id: 'p7', player2_id: 'p4', team_handicap: 17, gross_score: 82, net_score: 65 },
 ]
 
-// --- Helpers ---
-
-const playerMap = new Map(mockPlayers.map((p) => [p.id, p]))
-const roundMap = new Map(mockRounds.map((r) => [r.id, r]))
-
 type DayTab = 1 | 2 | 3 | 'overall'
 
 const formatLabels: Record<Round['format'], string> = {
@@ -62,11 +58,16 @@ type Standing = {
   format: string
 }
 
-function getStandingsForDay(day: 1 | 2 | 3): Standing[] {
-  const round = mockRounds.find((r) => r.day === day)
+function buildStandingsForDay(
+  day: 1 | 2 | 3,
+  rounds: Round[],
+  teams: Team[],
+  playerMap: Map<string, Player>
+): Standing[] {
+  const round = rounds.find((r) => r.day === day)
   if (!round) return []
 
-  const dayTeams = mockTeams
+  const dayTeams = teams
     .filter((t) => t.round_id === round.id)
     .sort((a, b) => (a.net_score ?? 999) - (b.net_score ?? 999))
 
@@ -80,10 +81,15 @@ function getStandingsForDay(day: 1 | 2 | 3): Standing[] {
   }))
 }
 
-function getOverallStandings(): Standing[] {
+function buildOverallStandings(
+  rounds: Round[],
+  teams: Team[],
+  playerMap: Map<string, Player>,
+  roundMap: Map<string, Round>
+): Standing[] {
   const pairScores = new Map<string, { net: number; gross: number; p1: string; p2: string; formats: Set<string> }>()
 
-  for (const team of mockTeams) {
+  for (const team of teams) {
     const round = roundMap.get(team.round_id)
     if (!round) continue
     const p1 = playerMap.get(team.player1_id)?.name ?? 'Unknown'
@@ -121,11 +127,43 @@ function getOverallStandings(): Standing[] {
 
 export default function LeaderboardPage() {
   const [activeTab, setActiveTab] = useState<DayTab>(1)
+  const [players, setPlayers] = useState<Player[]>(mockPlayers)
+  const [rounds, setRounds] = useState<Round[]>(mockRounds)
+  const [teams, setTeams] = useState<Team[]>(mockTeams)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    async function fetchData() {
+      const [playersRes, roundsRes, teamsRes] = await Promise.all([
+        supabase.from('players').select('*'),
+        supabase.from('rounds').select('*'),
+        supabase.from('teams').select('*'),
+      ])
+
+      if (playersRes.data && playersRes.data.length > 0) {
+        setPlayers(playersRes.data)
+      }
+      if (roundsRes.data && roundsRes.data.length > 0) {
+        setRounds(roundsRes.data)
+      }
+      if (teamsRes.data && teamsRes.data.length > 0) {
+        setTeams(teamsRes.data)
+      }
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
+  const playerMap = new Map(players.map((p) => [p.id, p]))
+  const roundMap = new Map(rounds.map((r) => [r.id, r]))
 
   const standings =
     activeTab === 'overall'
-      ? getOverallStandings()
-      : getStandingsForDay(activeTab)
+      ? buildOverallStandings(rounds, teams, playerMap, roundMap)
+      : buildStandingsForDay(activeTab, rounds, teams, playerMap)
 
   const tabs: { label: string; value: DayTab }[] = [
     { label: 'Day 1', value: 1 },
@@ -136,28 +174,28 @@ export default function LeaderboardPage() {
 
   const activeRound =
     activeTab !== 'overall'
-      ? mockRounds.find((r) => r.day === activeTab)
+      ? rounds.find((r) => r.day === activeTab)
       : null
 
   return (
-    <div className="min-h-screen bg-golf-cream">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-10 bg-golf-cream/95 backdrop-blur-sm border-b border-golf-border">
-        <div className="mx-auto max-w-lg px-4 pt-6 pb-4">
-          <h1 className="mb-4 text-center font-[family-name:var(--font-playfair)] text-2xl font-bold tracking-widest text-golf-dark">
+    <div className="min-h-screen bg-white">
+      {/* Green Header */}
+      <div className="sticky top-0 z-10 bg-golf-green">
+        <div className="mx-auto max-w-lg px-4 pt-5 pb-4">
+          <h1 className="mb-3 text-center font-[family-name:var(--font-playfair)] text-2xl font-bold tracking-widest text-white">
             LEADERBOARD
           </h1>
 
           {/* Day Selector */}
-          <div className="flex gap-1 rounded-xl bg-golf-card border border-golf-border p-1">
+          <div className="flex gap-1">
             {tabs.map((tab) => (
               <button
                 key={tab.label}
                 onClick={() => setActiveTab(tab.value)}
-                className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold tracking-wide transition-colors ${
+                className={`flex-1 rounded px-3 py-2 text-xs font-semibold tracking-wide transition-colors ${
                   activeTab === tab.value
-                    ? 'bg-golf-green text-white shadow-sm'
-                    : 'text-golf-muted hover:text-golf-dark'
+                    ? 'bg-golf-yellow text-golf-dark'
+                    : 'text-white/60 hover:text-white'
                 }`}
               >
                 {tab.label}
@@ -181,6 +219,16 @@ export default function LeaderboardPage() {
         )}
 
         {/* Standings */}
+        {loading && (
+          <div className="py-12 text-center text-sm text-golf-muted">
+            Loading...
+          </div>
+        )}
+        {!loading && standings.length === 0 && (
+          <div className="py-12 text-center text-sm text-golf-muted">
+            No scores yet
+          </div>
+        )}
         <div className="flex flex-col gap-2">
           {standings.map((entry) => (
             <div

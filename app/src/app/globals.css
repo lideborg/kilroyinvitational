@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  /* Masters-inspired palette */
+  /* Masters-exact palette */
   --golf-green: #006747;
+  --golf-green-dark: #00533A;
   --golf-green-light: #1A8B6A;
-  --golf-yellow: #C8A84C;
+  --golf-yellow: #CFAE4E;
   --golf-white: #FFFFFF;
   --golf-cream: #F2F0EB;
   --golf-dark: #1C1C1E;
@@ -16,6 +17,7 @@
 
 @theme inline {
   --color-golf-green: var(--golf-green);
+  --color-golf-green-dark: var(--golf-green-dark);
   --color-golf-green-light: var(--golf-green-light);
   --color-golf-yellow: var(--golf-yellow);
   --color-golf-white: var(--golf-white);
@@ -32,7 +34,7 @@ html {
 }
 
 body {
-  background-color: var(--golf-cream);
+  background-color: var(--golf-white);
   color: var(--golf-dark);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -1,115 +1,46 @@
 'use client';
 
-import { useState } from 'react';
-import { Target, Clock } from 'lucide-react';
-
-// --- Types ---
-
-interface DotEvent {
-  id: string;
-  playerId: string;
-  playerName: string;
-  dotType: string;
-  value: number;
-  timestamp: Date;
-}
-
-interface Player {
-  id: string;
-  name: string;
-  dots: number;
-  trend: number;
-  avatar: string;
-}
-
-// --- Mock Data ---
-
-const INITIAL_PLAYERS: Player[] = [
-  { id: '1', name: 'S.Kilroy', dots: 7, trend: 2, avatar: 'SK' },
-  { id: '2', name: 'N.Cafritz', dots: 5, trend: 1, avatar: 'NC' },
-  { id: '3', name: 'G.Miller', dots: 4, trend: 0, avatar: 'GM' },
-  { id: '4', name: 'M.Mortazavi', dots: 3, trend: -1, avatar: 'MM' },
-  { id: '5', name: 'D.Sibrizzi', dots: 2, trend: 1, avatar: 'DS' },
-  { id: '6', name: 'Dan', dots: 1, trend: -2, avatar: 'D' },
-  { id: '7', name: 'Karmali', dots: 0, trend: 0, avatar: 'K' },
-  { id: '8', name: 'H.Lideborg', dots: -1, trend: -1, avatar: 'HL' },
-];
-
-const INITIAL_EVENTS: DotEvent[] = [
-  {
-    id: 'e1',
-    playerId: '1',
-    playerName: 'S.Kilroy',
-    dotType: 'Longest Drive',
-    value: 1,
-    timestamp: new Date(Date.now() - 2 * 60 * 1000),
-  },
-  {
-    id: 'e2',
-    playerId: '2',
-    playerName: 'N.Cafritz',
-    dotType: 'Closest to Pin',
-    value: 1,
-    timestamp: new Date(Date.now() - 8 * 60 * 1000),
-  },
-  {
-    id: 'e3',
-    playerId: '8',
-    playerName: 'H.Lideborg',
-    dotType: 'Water Ball',
-    value: -1,
-    timestamp: new Date(Date.now() - 15 * 60 * 1000),
-  },
-  {
-    id: 'e4',
-    playerId: '1',
-    playerName: 'S.Kilroy',
-    dotType: 'Bunker Up & Down',
-    value: 1,
-    timestamp: new Date(Date.now() - 22 * 60 * 1000),
-  },
-  {
-    id: 'e5',
-    playerId: '5',
-    playerName: 'D.Sibrizzi',
-    dotType: '15\'+ Putt Made',
-    value: 1,
-    timestamp: new Date(Date.now() - 35 * 60 * 1000),
-  },
-  {
-    id: 'e6',
-    playerId: '6',
-    playerName: 'Dan',
-    dotType: 'Lost Ball',
-    value: -1,
-    timestamp: new Date(Date.now() - 48 * 60 * 1000),
-  },
-];
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { CircleDot, Clock } from 'lucide-react';
+import { createClient } from '@/lib/supabase';
+import type { Player as DbPlayer, DotEvent as DbDotEvent } from '@/lib/types';
 
 // --- Dot Type Definitions ---
 
-interface DotType {
+interface DotTypeDef {
   label: string;
+  dbKey: string;
   value: number;
 }
 
-const POSITIVE_DOTS: DotType[] = [
-  { label: 'Longest Drive', value: 1 },
-  { label: 'Closest to Pin', value: 1 },
-  { label: 'Bunker Up & Down', value: 1 },
-  { label: '15\'+ Putt', value: 1 },
-  { label: 'Winning Group', value: 3 },
-  { label: 'Best Vibes', value: 3 },
-  { label: 'Best Relative', value: 2 },
+const POSITIVE_DOTS: DotTypeDef[] = [
+  { label: 'Longest Drive', dbKey: 'longest_drive', value: 1 },
+  { label: 'Closest to Pin', dbKey: 'closest_pin', value: 1 },
+  { label: 'Bunker Up & Down', dbKey: 'bunker_save', value: 1 },
+  { label: '15\'+ Putt', dbKey: 'long_putt', value: 1 },
+  { label: 'Winning Group', dbKey: 'winning_group', value: 3 },
+  { label: 'Best Vibes', dbKey: 'best_vibes', value: 3 },
+  { label: 'Best Relative', dbKey: 'best_performer', value: 2 },
 ];
 
-const NEGATIVE_DOTS: DotType[] = [
-  { label: 'Lost Ball', value: -1 },
-  { label: 'Water Ball', value: -1 },
-  { label: 'Practice Divot', value: -1 },
+const NEGATIVE_DOTS: DotTypeDef[] = [
+  { label: 'Lost Ball', dbKey: 'lost_ball', value: -1 },
+  { label: 'Water Ball', dbKey: 'water_ball', value: -1 },
+  { label: 'Practice Divot', dbKey: 'practice_divot', value: -1 },
 ];
+
+// Map from db dot_type to display label
+const DOT_TYPE_LABELS: Record<string, string> = {};
+for (const d of [...POSITIVE_DOTS, ...NEGATIVE_DOTS]) {
+  DOT_TYPE_LABELS[d.dbKey] = d.label;
+}
 
 // --- Helpers ---
+
+function portraitPath(name: string): string {
+  return `/players/${name.toLowerCase().replace(/\./g, '_').replace(/\s+/g, '_')}.jpg`;
+}
 
 function timeAgo(date: Date): string {
   const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
@@ -121,49 +52,148 @@ function timeAgo(date: Date): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+// --- Derived UI types ---
+
+interface PlayerDots {
+  id: string;
+  name: string;
+  dots: number;
+  portrait: string;
+}
+
+interface DotEventUI {
+  id: string;
+  playerName: string;
+  dotType: string;
+  value: number;
+  timestamp: Date;
+}
+
+function buildPlayerDots(players: DbPlayer[], events: DbDotEvent[]): PlayerDots[] {
+  const dotsMap = new Map<string, number>();
+  for (const ev of events) {
+    dotsMap.set(ev.player_id, (dotsMap.get(ev.player_id) ?? 0) + ev.value);
+  }
+  return players.map((p) => ({
+    id: p.id,
+    name: p.name,
+    dots: dotsMap.get(p.id) ?? 0,
+    portrait: portraitPath(p.name),
+  }));
+}
+
+function buildEventList(events: DbDotEvent[], playerMap: Map<string, DbPlayer>): DotEventUI[] {
+  return events
+    .slice()
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    .map((ev) => ({
+      id: ev.id,
+      playerName: playerMap.get(ev.player_id)?.name ?? 'Unknown',
+      dotType: DOT_TYPE_LABELS[ev.dot_type] ?? ev.dot_type,
+      value: ev.value,
+      timestamp: new Date(ev.created_at),
+    }));
+}
+
 // --- Component ---
 
 export default function DotsPage() {
-  const [players, setPlayers] = useState<Player[]>(INITIAL_PLAYERS);
-  const [events, setEvents] = useState<DotEvent[]>(INITIAL_EVENTS);
+  const [dbPlayers, setDbPlayers] = useState<DbPlayer[]>([]);
+  const [dbEvents, setDbEvents] = useState<DbDotEvent[]>([]);
   const [selectedPlayer, setSelectedPlayer] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const sortedPlayers = [...players].sort((a, b) => b.dots - a.dots);
+  useEffect(() => {
+    const supabase = createClient();
 
-  function handleAddDot(dotType: DotType) {
+    async function fetchData() {
+      const [playersRes, eventsRes] = await Promise.all([
+        supabase.from('players').select('*'),
+        supabase.from('dot_events').select('*'),
+      ]);
+
+      if (playersRes.data) setDbPlayers(playersRes.data);
+      if (eventsRes.data) setDbEvents(eventsRes.data);
+      setLoading(false);
+    }
+
+    fetchData();
+
+    // Subscribe to realtime changes on dot_events
+    const channel = supabase
+      .channel('dot_events_realtime')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'dot_events' },
+        (payload) => {
+          const newEvent = payload.new as DbDotEvent;
+          setDbEvents((prev) => {
+            if (prev.some((e) => e.id === newEvent.id)) return prev;
+            return [...prev, newEvent];
+          });
+        }
+      )
+      .on(
+        'postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'dot_events' },
+        (payload) => {
+          const oldEvent = payload.old as { id: string };
+          setDbEvents((prev) => prev.filter((e) => e.id !== oldEvent.id));
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const playerMap = new Map(dbPlayers.map((p) => [p.id, p]));
+  const playerDots = buildPlayerDots(dbPlayers, dbEvents);
+  const sortedPlayers = [...playerDots].sort((a, b) => b.dots - a.dots);
+  const eventList = buildEventList(dbEvents, playerMap);
+
+  async function handleAddDot(dotType: DotTypeDef) {
     if (!selectedPlayer) return;
 
-    const player = players.find((p) => p.id === selectedPlayer);
-    if (!player) return;
+    const supabase = createClient();
 
-    setPlayers((prev) =>
-      prev.map((p) =>
-        p.id === selectedPlayer
-          ? { ...p, dots: p.dots + dotType.value, trend: p.trend + dotType.value }
-          : p
-      )
-    );
+    const { data, error } = await supabase
+      .from('dot_events')
+      .insert({
+        player_id: selectedPlayer,
+        dot_type: dotType.dbKey,
+        value: dotType.value,
+        description: dotType.label,
+      })
+      .select()
+      .single();
 
-    const newEvent: DotEvent = {
-      id: `e${Date.now()}`,
-      playerId: selectedPlayer,
-      playerName: player.name,
-      dotType: dotType.label,
-      value: dotType.value,
-      timestamp: new Date(),
-    };
-    setEvents((prev) => [newEvent, ...prev]);
+    if (!error && data) {
+      setDbEvents((prev) => {
+        if (prev.some((e) => e.id === data.id)) return prev;
+        return [...prev, data];
+      });
+    }
 
     setSelectedPlayer(null);
   }
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-sm text-golf-muted">Loading...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-golf-cream">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-golf-cream/95 backdrop-blur-md border-b border-golf-border">
-        <div className="px-4 py-3 flex items-center gap-2">
-          <Target size={18} className="text-golf-green" />
-          <h1 className="text-lg font-bold tracking-wide text-golf-dark font-[family-name:var(--font-playfair)]">
+      <div className="sticky top-0 z-10 bg-golf-green">
+        <div className="px-4 py-4 flex items-center gap-2">
+          <CircleDot size={18} className="text-golf-yellow" />
+          <h1 className="text-lg font-bold tracking-wide text-white font-[family-name:var(--font-playfair)]">
             DOTS
           </h1>
         </div>
@@ -187,7 +217,7 @@ export default function DotsPage() {
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                     isSelected
                       ? 'bg-golf-green/5 ring-1 ring-golf-green/20'
-                      : 'bg-golf-card border border-golf-border shadow-sm hover:bg-golf-cream'
+                      : 'bg-golf-card border border-golf-border shadow-sm hover:bg-white'
                   }`}
                 >
                   {/* Rank */}
@@ -196,8 +226,14 @@ export default function DotsPage() {
                   </span>
 
                   {/* Avatar */}
-                  <div className="w-8 h-8 rounded-full bg-golf-cream flex items-center justify-center text-xs font-medium text-golf-muted shrink-0">
-                    {player.avatar}
+                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 relative">
+                    <Image
+                      src={player.portrait}
+                      alt={player.name}
+                      fill
+                      className="object-cover"
+                      sizes="32px"
+                    />
                   </div>
 
                   {/* Name */}
@@ -242,7 +278,7 @@ export default function DotsPage() {
                 <p className="text-sm text-golf-dark/60">
                   Adding for{' '}
                   <span className="font-semibold text-golf-dark">
-                    {players.find((p) => p.id === selectedPlayer)?.name}
+                    {playerDots.find((p) => p.id === selectedPlayer)?.name}
                   </span>
                 </p>
                 <button
@@ -308,7 +344,7 @@ export default function DotsPage() {
             Activity
           </h2>
           <div className="bg-golf-card border border-golf-border rounded-xl shadow-sm divide-y divide-golf-border">
-            {events.slice(0, 10).map((event) => (
+            {eventList.slice(0, 10).map((event) => (
               <div
                 key={event.id}
                 className="flex items-center gap-3 px-4 py-3"
@@ -333,7 +369,7 @@ export default function DotsPage() {
               </div>
             ))}
 
-            {events.length === 0 && (
+            {eventList.length === 0 && (
               <div className="px-4 py-8 text-center text-sm text-golf-muted">
                 No dots recorded yet
               </div>

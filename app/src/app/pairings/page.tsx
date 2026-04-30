@@ -1,20 +1,21 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Users, Shuffle, ChevronDown, ChevronUp } from 'lucide-react'
 import {
   calculateShambleHandicap,
   calculateScrambleHandicap,
 } from '@/lib/handicap'
+import { createClient } from '@/lib/supabase'
 
-// --- Mock Data ---
+// --- Mock Data (fallback) ---
 
 type MockPlayer = {
   name: string
   handicap: number
 }
 
-const PLAYERS: MockPlayer[] = [
+const FALLBACK_PLAYERS: MockPlayer[] = [
   { name: 'S.Kilroy', handicap: 12 },
   { name: 'N.Cafritz', handicap: 14 },
   { name: 'G.Miller', handicap: 10 },
@@ -91,15 +92,15 @@ function makeBalancedPairings(players: MockPlayer[]): Pairing[] {
   return shuffle(pairs)
 }
 
-function generateInitialPairings(): {
+function generateInitialPairings(playerList: MockPlayer[]): {
   day1: Pairing[]
   day2: Pairing[]
   day3: Pairing[]
 } {
   return {
-    day1: makePairings(shuffle(PLAYERS)),
-    day2: makeBalancedPairings(PLAYERS),
-    day3: makePairings(shuffle(PLAYERS)),
+    day1: makePairings(shuffle(playerList)),
+    day2: makeBalancedPairings(playerList),
+    day3: makePairings(shuffle(playerList)),
   }
 }
 
@@ -217,15 +218,34 @@ function DayCard({
 // --- Page ---
 
 export default function PairingsPage() {
-  const [allPairings, setAllPairings] = useState(generateInitialPairings)
+  const [players, setPlayers] = useState<MockPlayer[]>(FALLBACK_PLAYERS)
+  const [allPairings, setAllPairings] = useState(() => generateInitialPairings(FALLBACK_PLAYERS))
   const [expandedDay, setExpandedDay] = useState<number>(CURRENT_DAY)
+
+  useEffect(() => {
+    const supabase = createClient()
+
+    async function fetchPlayers() {
+      const { data } = await supabase.from('players').select('name, handicap')
+      if (data && data.length > 0) {
+        const fetched: MockPlayer[] = data.map((p) => ({
+          name: p.name,
+          handicap: p.handicap,
+        }))
+        setPlayers(fetched)
+        setAllPairings(generateInitialPairings(fetched))
+      }
+    }
+
+    fetchPlayers()
+  }, [])
 
   const randomizeDay1 = useCallback(() => {
     setAllPairings((prev) => ({
       ...prev,
-      day1: makePairings(shuffle(PLAYERS)),
+      day1: makePairings(shuffle(players)),
     }))
-  }, [])
+  }, [players])
 
   const pairingsByDay: Record<number, Pairing[]> = {
     1: allPairings.day1,
@@ -234,12 +254,12 @@ export default function PairingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-golf-cream">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-golf-cream/95 backdrop-blur-md border-b border-golf-border">
+      <header className="sticky top-0 z-40 bg-golf-green">
         <div className="mx-auto max-w-lg flex items-center gap-3 px-5 py-4">
-          <Users className="h-5 w-5 text-golf-green" />
-          <h1 className="text-sm font-semibold tracking-widest text-golf-dark uppercase">
+          <Users className="h-5 w-5 text-golf-yellow" />
+          <h1 className="text-sm font-semibold tracking-widest text-white uppercase">
             Pairings
           </h1>
         </div>
