@@ -1,26 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  /* Florida Art Deco palette */
-  --golf-green: #006747;
-  --golf-gold: #C8A951;
-  --golf-dark: #0A1A1F;
-  --golf-cream: #F5F0E8;
-  --golf-card: #122429;
-  --golf-coral: #E8734A;
-  --golf-teal: #2EC4B6;
-  --golf-pink: #F4A5AE;
+  /* Miami Vice / Art Deco — bright, warm, pastel */
+  --golf-dark: #1A1032;
+  --golf-card: rgba(255, 255, 255, 0.06);
+  --golf-cream: #FFF8F0;
+  --golf-gold: #D4A843;
+  --golf-pink: #FF3B8B;
+  --golf-coral: #FF6B4A;
+  --golf-teal: #00E5CC;
+  --golf-purple: #8B5CF6;
+  --golf-sky: #7DD3FC;
+  --golf-peach: #FBBF7E;
+
+  /* Bright background gradient */
+  --golf-bg-from: #0F2027;
+  --golf-bg-via: #1A1040;
+  --golf-bg-to: #2C1654;
 }
 
 @theme inline {
-  --color-golf-green: var(--golf-green);
-  --color-golf-gold: var(--golf-gold);
   --color-golf-dark: var(--golf-dark);
-  --color-golf-cream: var(--golf-cream);
   --color-golf-card: var(--golf-card);
+  --color-golf-cream: var(--golf-cream);
+  --color-golf-gold: var(--golf-gold);
+  --color-golf-pink: var(--golf-pink);
   --color-golf-coral: var(--golf-coral);
   --color-golf-teal: var(--golf-teal);
-  --color-golf-pink: var(--golf-pink);
+  --color-golf-purple: var(--golf-purple);
+  --color-golf-sky: var(--golf-sky);
+  --color-golf-peach: var(--golf-peach);
 }
 
 html {
@@ -28,13 +37,14 @@ html {
 }
 
 body {
-  background-color: var(--golf-dark);
+  background: linear-gradient(135deg, var(--golf-bg-from), var(--golf-bg-via), var(--golf-bg-to));
+  background-attachment: fixed;
   color: var(--golf-cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background-color: var(--golf-teal);
-  color: var(--golf-dark);
+  background-color: var(--golf-pink);
+  color: white;
 }

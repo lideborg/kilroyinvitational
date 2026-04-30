@@ -25,21 +25,21 @@ interface Player {
 // --- Mock Data ---
 
 const INITIAL_PLAYERS: Player[] = [
-  { id: '1', name: 'Mike', dots: 7, trend: 2, avatar: 'M' },
-  { id: '2', name: 'Kilroy', dots: 5, trend: 1, avatar: 'K' },
-  { id: '3', name: 'Danny', dots: 4, trend: 0, avatar: 'D' },
-  { id: '4', name: 'Jake', dots: 3, trend: -1, avatar: 'J' },
-  { id: '5', name: 'Sully', dots: 2, trend: 1, avatar: 'S' },
-  { id: '6', name: 'Hamp', dots: 1, trend: -2, avatar: 'H' },
-  { id: '7', name: 'Trev', dots: 0, trend: 0, avatar: 'T' },
-  { id: '8', name: 'Chase', dots: -1, trend: -1, avatar: 'C' },
+  { id: '1', name: 'Sam', dots: 7, trend: 2, avatar: 'S' },
+  { id: '2', name: 'Nick', dots: 5, trend: 1, avatar: 'N' },
+  { id: '3', name: 'Garrett', dots: 4, trend: 0, avatar: 'G' },
+  { id: '4', name: 'Mateen', dots: 3, trend: -1, avatar: 'M' },
+  { id: '5', name: 'Dean', dots: 2, trend: 1, avatar: 'D' },
+  { id: '6', name: 'Dan', dots: 1, trend: -2, avatar: 'D' },
+  { id: '7', name: 'Karmali', dots: 0, trend: 0, avatar: 'K' },
+  { id: '8', name: 'Hampus', dots: -1, trend: -1, avatar: 'H' },
 ];
 
 const INITIAL_EVENTS: DotEvent[] = [
   {
     id: 'e1',
     playerId: '1',
-    playerName: 'Mike',
+    playerName: 'Sam',
     dotType: 'Longest Drive',
     value: 1,
     timestamp: new Date(Date.now() - 2 * 60 * 1000),
@@ -47,7 +47,7 @@ const INITIAL_EVENTS: DotEvent[] = [
   {
     id: 'e2',
     playerId: '2',
-    playerName: 'Kilroy',
+    playerName: 'Nick',
     dotType: 'Closest to Pin',
     value: 1,
     timestamp: new Date(Date.now() - 8 * 60 * 1000),
@@ -55,7 +55,7 @@ const INITIAL_EVENTS: DotEvent[] = [
   {
     id: 'e3',
     playerId: '8',
-    playerName: 'Chase',
+    playerName: 'Hampus',
     dotType: 'Water Ball',
     value: -1,
     timestamp: new Date(Date.now() - 15 * 60 * 1000),
@@ -63,7 +63,7 @@ const INITIAL_EVENTS: DotEvent[] = [
   {
     id: 'e4',
     playerId: '1',
-    playerName: 'Mike',
+    playerName: 'Sam',
     dotType: 'Bunker Up & Down',
     value: 1,
     timestamp: new Date(Date.now() - 22 * 60 * 1000),
@@ -71,7 +71,7 @@ const INITIAL_EVENTS: DotEvent[] = [
   {
     id: 'e5',
     playerId: '5',
-    playerName: 'Sully',
+    playerName: 'Dean',
     dotType: '15\'+ Putt Made',
     value: 1,
     timestamp: new Date(Date.now() - 35 * 60 * 1000),
@@ -79,7 +79,7 @@ const INITIAL_EVENTS: DotEvent[] = [
   {
     id: 'e6',
     playerId: '6',
-    playerName: 'Hamp',
+    playerName: 'Dan',
     dotType: 'Lost Ball',
     value: -1,
     timestamp: new Date(Date.now() - 48 * 60 * 1000),
@@ -158,11 +158,11 @@ export default function DotsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-golf-dark">
+    <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-golf-dark/90 backdrop-blur-md border-b border-white/5">
+      <div className="sticky top-0 z-10 bg-transparent/90 backdrop-blur-md border-b border-white/5">
         <div className="px-4 py-3 flex items-center gap-2">
-          <Target size={18} className="text-golf-teal" />
+          <Target size={18} className="text-golf-pink" />
           <h1 className="text-lg font-bold tracking-wide text-golf-cream font-[family-name:var(--font-playfair)]">
             DOTS
           </h1>
@@ -186,8 +186,8 @@ export default function DotsPage() {
                   }
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                     isSelected
-                      ? 'bg-golf-teal/10 ring-1 ring-golf-teal/30'
-                      : 'bg-golf-card hover:bg-golf-card/80'
+                      ? 'bg-golf-pink/10 ring-1 ring-golf-pink/30'
+                      : 'bg-white/5 hover:bg-white/5/80'
                   }`}
                 >
                   {/* Rank */}
@@ -230,7 +230,7 @@ export default function DotsPage() {
           </h2>
 
           {!selectedPlayer ? (
-            <div className="bg-golf-card rounded-lg p-6 text-center">
+            <div className="bg-white/5 rounded-lg p-6 text-center">
               <p className="text-sm text-golf-cream/30">
                 Tap a player to add dots
               </p>
@@ -238,7 +238,7 @@ export default function DotsPage() {
           ) : (
             <div className="space-y-4">
               {/* Selected player indicator */}
-              <div className="bg-golf-card rounded-lg px-4 py-2.5 flex items-center justify-between">
+              <div className="bg-white/5 rounded-lg px-4 py-2.5 flex items-center justify-between">
                 <p className="text-sm text-golf-cream/60">
                   Adding for{' '}
                   <span className="font-semibold text-golf-cream">
@@ -263,7 +263,7 @@ export default function DotsPage() {
                     <button
                       key={dot.label}
                       onClick={() => handleAddDot(dot)}
-                      className="flex items-center justify-between bg-golf-card hover:bg-golf-teal/10 active:bg-golf-teal/15 border border-white/5 hover:border-golf-teal/20 rounded-lg px-3 py-2.5 transition-all"
+                      className="flex items-center justify-between bg-white/5 hover:bg-golf-teal/10 active:bg-golf-teal/15 border border-white/5 hover:border-golf-teal/20 rounded-lg px-3 py-2.5 transition-all"
                     >
                       <span className="text-sm text-golf-cream/80">
                         {dot.label}
@@ -286,7 +286,7 @@ export default function DotsPage() {
                     <button
                       key={dot.label}
                       onClick={() => handleAddDot(dot)}
-                      className="flex items-center justify-between bg-golf-card hover:bg-golf-coral/10 active:bg-golf-coral/15 border border-white/5 hover:border-golf-coral/20 rounded-lg px-3 py-2.5 transition-all"
+                      className="flex items-center justify-between bg-white/5 hover:bg-golf-coral/10 active:bg-golf-coral/15 border border-white/5 hover:border-golf-coral/20 rounded-lg px-3 py-2.5 transition-all"
                     >
                       <span className="text-sm text-golf-cream/80">
                         {dot.label}
@@ -307,7 +307,7 @@ export default function DotsPage() {
           <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-golf-cream/40 mb-3">
             Activity
           </h2>
-          <div className="bg-golf-card rounded-lg divide-y divide-white/5">
+          <div className="bg-white/5 rounded-lg divide-y divide-white/5">
             {events.slice(0, 10).map((event) => (
               <div
                 key={event.id}

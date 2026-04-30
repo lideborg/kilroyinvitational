@@ -15,14 +15,14 @@ type MockPlayer = {
 }
 
 const PLAYERS: MockPlayer[] = [
-  { name: 'Kilroy', handicap: 10 },
-  { name: 'Murph', handicap: 18 },
-  { name: 'Sully', handicap: 14 },
-  { name: 'Fitzy', handicap: 22 },
-  { name: 'Walsh', handicap: 8 },
-  { name: 'Burke', handicap: 20 },
-  { name: 'Duffy', handicap: 16 },
-  { name: 'Quinn', handicap: 24 },
+  { name: 'Sam', handicap: 12 },
+  { name: 'Nick', handicap: 14 },
+  { name: 'Garrett', handicap: 10 },
+  { name: 'Mateen', handicap: 20 },
+  { name: 'Dean', handicap: 18 },
+  { name: 'Dan', handicap: 16 },
+  { name: 'Karmali', handicap: 22 },
+  { name: 'Hampus', handicap: 24 },
 ]
 
 type Pairing = [MockPlayer, MockPlayer]
@@ -117,7 +117,7 @@ function TeamCard({
   const teamHcp = handicapFn(pair[0].handicap, pair[1].handicap)
 
   return (
-    <div className="rounded-lg bg-golf-card border border-white/5 px-4 py-3">
+    <div className="rounded-lg bg-white/5 border border-white/5 px-4 py-3">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[11px] tracking-widest text-golf-cream/30 uppercase">
           Team {teamIndex + 1}
@@ -157,9 +157,9 @@ function DayCard({
     <div
       className={`rounded-xl overflow-hidden ${
         isCurrent
-          ? 'border-l-2 border-l-golf-teal border-t border-r border-b border-white/5'
+          ? 'border-l-2 border-l-golf-pink border-t border-r border-b border-white/5'
           : 'border border-white/5'
-      } bg-golf-card`}
+      } bg-white/5`}
     >
       {/* Day header */}
       <button
@@ -167,7 +167,7 @@ function DayCard({
         className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer"
       >
         <div className="flex-1 min-w-0">
-          <h2 className="text-xs font-semibold tracking-wider text-golf-teal uppercase">
+          <h2 className="text-xs font-semibold tracking-wider text-golf-pink uppercase">
             {config.title}
           </h2>
           {isExpanded && (
@@ -191,7 +191,7 @@ function DayCard({
           {onRandomize && (
             <button
               onClick={onRandomize}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-golf-teal/40 text-golf-teal text-[11px] font-medium tracking-wide uppercase transition-colors hover:bg-golf-teal/10 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-golf-pink/40 text-golf-pink text-[11px] font-medium tracking-wide uppercase transition-colors hover:bg-golf-pink/10 active:scale-95 cursor-pointer"
             >
               <Shuffle className="h-3 w-3" />
               Randomize
@@ -234,11 +234,11 @@ export default function PairingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-golf-dark">
+    <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-golf-dark/90 backdrop-blur-md border-b border-white/5">
+      <header className="sticky top-0 z-40 bg-transparent/90 backdrop-blur-md border-b border-white/5">
         <div className="mx-auto max-w-lg flex items-center gap-3 px-5 py-4">
-          <Users className="h-5 w-5 text-golf-teal" />
+          <Users className="h-5 w-5 text-golf-pink" />
           <h1 className="text-sm font-semibold tracking-widest text-golf-cream uppercase">
             Pairings
           </h1>

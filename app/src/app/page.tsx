@@ -1,55 +1,37 @@
 'use client';
 
 import Link from 'next/link';
-import { Trophy, Target, Camera, Users } from 'lucide-react';
+import Image from 'next/image';
+import { Flag, Sparkles, Camera, Users } from 'lucide-react';
 
 const navCards = [
-  { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-  { href: '/dots', label: 'Dots', icon: Target },
-  { href: '/photos', label: 'Photos', icon: Camera },
-  { href: '/pairings', label: 'Pairings', icon: Users },
+  { href: '/leaderboard', label: 'Scores', icon: Flag, color: 'text-golf-coral' },
+  { href: '/dots', label: 'Dots', icon: Sparkles, color: 'text-golf-peach' },
+  { href: '/photos', label: 'Photos', icon: Camera, color: 'text-golf-sky' },
+  { href: '/pairings', label: 'Pairings', icon: Users, color: 'text-golf-teal' },
 ] as const;
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-golf-dark">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Warm ambient glows */}
+      <div className="pointer-events-none absolute top-[-200px] left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full bg-golf-coral/15 blur-[150px]" />
+      <div className="pointer-events-none absolute bottom-0 left-[-100px] w-[500px] h-[500px] rounded-full bg-golf-pink/10 blur-[120px]" />
+      <div className="pointer-events-none absolute bottom-20 right-[-100px] w-[400px] h-[400px] rounded-full bg-golf-purple/10 blur-[100px]" />
+
       {/* Hero */}
-      <section className="flex min-h-[85vh] flex-col items-center justify-center px-6 text-center">
-        {/* Art Deco geometric accent */}
-        <div className="mb-8 flex items-center gap-2">
-          <span className="block h-px w-8 bg-golf-teal" />
-          <span className="block h-2 w-2 rotate-45 border border-golf-teal" />
-          <span className="block h-px w-8 bg-golf-teal" />
-        </div>
+      <section className="relative flex min-h-[80vh] flex-col items-center justify-center px-6 text-center">
+        <Image
+          src="/logo.png"
+          alt="Kilroy Invitational"
+          width={300}
+          height={220}
+          className="invert brightness-200 mb-6 drop-shadow-[0_0_40px_rgba(255,107,74,0.15)]"
+          priority
+        />
 
-        <p className="mb-4 text-xs font-medium tracking-[0.4em] text-golf-teal">
-          EST. 2026
-        </p>
-
-        <h1 className="font-[family-name:var(--font-playfair)] text-4xl leading-[1.1] font-bold text-golf-cream sm:text-5xl">
-          THE KILROY
-          <br />
-          <span className="text-golf-gold">INVITATIONAL</span>
-        </h1>
-
-        {/* Art Deco divider */}
-        <div className="my-6 flex items-center gap-2">
-          <span className="block h-px w-16 bg-gradient-to-r from-transparent to-golf-gold/60" />
-          <span className="text-golf-coral text-lg">&#9670;</span>
-          <span className="block h-px w-16 bg-gradient-to-l from-transparent to-golf-gold/60" />
-        </div>
-
-        <p className="mb-2 text-xs font-semibold tracking-[0.5em] text-golf-coral">
-          GOLF & BEER
-        </p>
-
-        <p className="text-sm tracking-widest text-golf-cream/50">
+        <p className="text-sm tracking-[0.3em] text-golf-peach/60 font-medium">
           BIRDIES ARE RARE, BEERS ARE NOT
-        </p>
-
-        {/* Palm / Florida hint */}
-        <p className="mt-6 text-xs tracking-[0.3em] text-golf-teal/60">
-          &#127796; FLORIDA &#127796;
         </p>
       </section>
 
@@ -61,7 +43,7 @@ export default function Home() {
           { n: '3', label: 'Days' },
         ].map((s, i) => (
           <div key={s.label} className="flex items-center">
-            {i > 0 && <span className="mx-5 h-6 w-px bg-golf-teal/30" />}
+            {i > 0 && <span className="mx-5 h-6 w-px bg-golf-cream/15" />}
             <div className="text-center">
               <p className="font-[family-name:var(--font-playfair)] text-2xl font-bold text-golf-cream">
                 {s.n}
@@ -76,13 +58,13 @@ export default function Home() {
 
       {/* Nav Cards */}
       <section className="mx-auto grid max-w-sm grid-cols-2 gap-3 px-6 pb-24">
-        {navCards.map(({ href, label, icon: Icon }) => (
+        {navCards.map(({ href, label, icon: Icon, color }) => (
           <Link
             key={href}
             href={href}
-            className="group flex flex-col items-center gap-2.5 rounded-lg border border-golf-teal/10 bg-golf-card p-5 transition-all active:scale-[0.97] hover:border-golf-teal/30"
+            className="group flex flex-col items-center gap-2.5 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm p-5 transition-all active:scale-[0.97] hover:bg-white/10 hover:border-white/20"
           >
-            <Icon className="h-6 w-6 text-golf-teal transition-colors group-hover:text-golf-gold" />
+            <Icon className={`h-6 w-6 ${color} transition-colors`} />
             <span className="text-xs font-medium tracking-wider text-golf-cream/70 group-hover:text-golf-cream">
               {label}
             </span>

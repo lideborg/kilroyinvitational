@@ -6,20 +6,20 @@ import type { Player, Team, Round } from '@/lib/types'
 // --- Mock Data ---
 
 const mockPlayers: Player[] = [
-  { id: 'p1', name: 'Tommy Fleetwood', handicap: 8, created_at: '' },
-  { id: 'p2', name: 'Bobby Sullivan', handicap: 14, created_at: '' },
-  { id: 'p3', name: 'Danny Wilkins', handicap: 6, created_at: '' },
-  { id: 'p4', name: 'Ricky Dawson', handicap: 18, created_at: '' },
-  { id: 'p5', name: 'Charlie Hoffman', handicap: 10, created_at: '' },
-  { id: 'p6', name: 'Mikey Breslin', handicap: 12, created_at: '' },
-  { id: 'p7', name: 'Jake Callaway', handicap: 16, created_at: '' },
-  { id: 'p8', name: 'Nick Harrington', handicap: 20, created_at: '' },
+  { id: 'p1', name: 'Sam', handicap: 12, created_at: '' },
+  { id: 'p2', name: 'Nick', handicap: 14, created_at: '' },
+  { id: 'p3', name: 'Garrett', handicap: 10, created_at: '' },
+  { id: 'p4', name: 'Mateen', handicap: 20, created_at: '' },
+  { id: 'p5', name: 'Dean', handicap: 18, created_at: '' },
+  { id: 'p6', name: 'Dan', handicap: 16, created_at: '' },
+  { id: 'p7', name: 'Karmali', handicap: 22, created_at: '' },
+  { id: 'p8', name: 'Hampus', handicap: 24, created_at: '' },
 ]
 
 const mockRounds: Round[] = [
-  { id: 'r1', day: 1, format: 'shamble', course_name: 'Pine Valley GC', created_at: '' },
-  { id: 'r2', day: 2, format: 'scramble', course_name: 'Bandon Dunes', created_at: '' },
-  { id: 'r3', day: 3, format: 'scramble_hybrid', course_name: 'Pacific Dunes', created_at: '' },
+  { id: 'r1', day: 1, format: 'shamble', course_name: 'Omni National', created_at: '' },
+  { id: 'r2', day: 2, format: 'scramble', course_name: 'Omni International', created_at: '' },
+  { id: 'r3', day: 3, format: 'scramble_hybrid', course_name: 'Celebration Golf Club', created_at: '' },
 ]
 
 const mockTeams: Team[] = [
@@ -140,23 +140,23 @@ export default function LeaderboardPage() {
       : null
 
   return (
-    <div className="min-h-screen bg-golf-dark">
+    <div className="min-h-screen bg-transparent">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-10 bg-golf-dark/80 backdrop-blur-md">
+      <div className="sticky top-0 z-10 bg-[#1A1032]/80 backdrop-blur-md">
         <div className="mx-auto max-w-lg px-4 pt-6 pb-4">
           <h1 className="mb-4 text-center font-[family-name:var(--font-playfair)] text-2xl font-bold tracking-widest text-golf-cream">
             LEADERBOARD
           </h1>
 
           {/* Day Selector */}
-          <div className="flex gap-1 rounded-lg bg-golf-card p-1">
+          <div className="flex gap-1 rounded-lg bg-white/5 p-1">
             {tabs.map((tab) => (
               <button
                 key={tab.label}
                 onClick={() => setActiveTab(tab.value)}
                 className={`flex-1 rounded-md px-3 py-2 text-xs font-semibold tracking-wide transition-colors ${
                   activeTab === tab.value
-                    ? 'bg-golf-teal/15 text-golf-teal'
+                    ? 'bg-golf-pink/15 text-golf-pink'
                     : 'text-golf-cream/40 hover:text-golf-cream/70'
                 }`}
               >
@@ -185,9 +185,9 @@ export default function LeaderboardPage() {
           {standings.map((entry) => (
             <div
               key={`${entry.rank}-${entry.player1Name}`}
-              className={`rounded-lg bg-golf-card p-4 ${
+              className={`rounded-lg bg-white/5 p-4 ${
                 entry.rank === 1
-                  ? 'border-l-2 border-golf-teal'
+                  ? 'border-l-2 border-golf-pink'
                   : ''
               }`}
             >
@@ -196,7 +196,7 @@ export default function LeaderboardPage() {
                 <span
                   className={`w-6 flex-shrink-0 text-center text-lg font-bold tabular-nums ${
                     entry.rank === 1
-                      ? 'text-golf-teal'
+                      ? 'text-golf-pink'
                       : entry.rank <= 3
                         ? 'text-golf-cream/60'
                         : 'text-golf-cream/30'
@@ -213,7 +213,7 @@ export default function LeaderboardPage() {
                     {entry.player2Name}
                   </p>
                   <div className="mt-1 flex items-center gap-2">
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-golf-teal/60">
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-golf-pink/60">
                       {entry.format}
                     </span>
                     <span className="text-[10px] text-golf-cream/25">

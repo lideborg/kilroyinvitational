@@ -72,9 +72,9 @@ export default function PhotosPage() {
       : MOCK_PHOTOS.filter((p) => `Day ${p.day}` === activeDay);
 
   return (
-    <div className="min-h-screen bg-golf-dark">
+    <div className="min-h-screen bg-transparent">
       {/* Header */}
-      <div className="sticky top-0 z-40 bg-golf-dark/95 backdrop-blur-sm border-b border-white/5">
+      <div className="sticky top-0 z-40 bg-transparent/95 backdrop-blur-sm border-b border-white/5">
         <div className="px-4 pt-6 pb-3">
           <div className="flex items-center gap-2">
             <Camera className="h-5 w-5 text-golf-gold" />
@@ -92,7 +92,7 @@ export default function PhotosPage() {
               onClick={() => setActiveDay(day)}
               className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                 activeDay === day
-                  ? "bg-golf-teal text-golf-dark"
+                  ? "bg-golf-pink text-white"
                   : "bg-white/5 text-golf-cream/50 hover:bg-white/10"
               }`}
             >
@@ -108,7 +108,7 @@ export default function PhotosPage() {
           {filtered.map((photo, i) => (
             <div
               key={photo.id}
-              className="break-inside-avoid rounded-xl overflow-hidden bg-golf-card"
+              className="break-inside-avoid rounded-xl overflow-hidden bg-white/5"
             >
               {/* Placeholder image */}
               <div
@@ -126,7 +126,7 @@ export default function PhotosPage() {
                   <span className="text-xs text-golf-cream/40">
                     {photo.player}
                   </span>
-                  <span className="text-[10px] text-golf-teal/60 font-medium">
+                  <span className="text-[10px] text-golf-pink/60 font-medium">
                     Day {photo.day}
                   </span>
                 </div>
@@ -146,7 +146,7 @@ export default function PhotosPage() {
       {/* FAB */}
       <button
         onClick={() => setShowUpload(true)}
-        className="fixed bottom-24 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-golf-teal shadow-lg shadow-golf-teal/25 active:scale-95 transition-transform"
+        className="fixed bottom-24 right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-golf-pink shadow-lg shadow-golf-pink/25 active:scale-95 transition-transform"
       >
         <Plus className="h-7 w-7 text-golf-dark" />
       </button>
@@ -159,7 +159,7 @@ export default function PhotosPage() {
             onClick={() => setShowUpload(false)}
           />
 
-          <div className="relative w-full max-w-lg rounded-t-2xl bg-golf-card px-5 pt-4 pb-6 animate-slide-up">
+          <div className="relative w-full max-w-lg rounded-t-2xl bg-white/5 px-5 pt-4 pb-6 animate-slide-up">
             <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/15" />
 
             <button
@@ -190,7 +190,7 @@ export default function PhotosPage() {
               placeholder="Add a caption..."
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
-              className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 text-sm text-golf-cream placeholder:text-golf-cream/25 focus:outline-none focus:border-golf-teal/50 mb-3"
+              className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 text-sm text-golf-cream placeholder:text-golf-cream/25 focus:outline-none focus:border-golf-pink/50 mb-3"
             />
 
             {/* Day selector */}
@@ -201,7 +201,7 @@ export default function PhotosPage() {
                   onClick={() => setUploadDay(d)}
                   className={`flex-1 rounded-lg py-2 text-sm font-medium transition-colors ${
                     uploadDay === d
-                      ? "bg-golf-teal text-golf-dark"
+                      ? "bg-golf-pink text-white"
                       : "bg-white/5 text-golf-cream/40 hover:bg-white/10"
                   }`}
                 >
@@ -211,7 +211,7 @@ export default function PhotosPage() {
             </div>
 
             {/* Submit */}
-            <button className="w-full rounded-xl bg-golf-teal py-3 text-sm font-semibold text-golf-dark active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+            <button className="w-full rounded-xl bg-golf-pink py-3 text-sm font-semibold text-white active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
               <Upload className="h-4 w-4" />
               Upload
             </button>

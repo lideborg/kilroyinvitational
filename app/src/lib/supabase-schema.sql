@@ -53,7 +53,7 @@ create table photos (
 );
 
 -- ============================================================
--- Row Level Security
+-- Row Level Security — anonymous read, anon write (PIN in app)
 -- ============================================================
 
 alter table players enable row level security;
@@ -62,57 +62,21 @@ alter table teams enable row level security;
 alter table dot_events enable row level security;
 alter table photos enable row level security;
 
--- All authenticated users can read everything
-create policy "Authenticated users can read players"
-  on players for select
-  to authenticated
-  using (true);
+-- Everyone can read everything (no login needed)
+create policy "Anyone can read players" on players for select to anon, authenticated using (true);
+create policy "Anyone can read rounds" on rounds for select to anon, authenticated using (true);
+create policy "Anyone can read teams" on teams for select to anon, authenticated using (true);
+create policy "Anyone can read dot_events" on dot_events for select to anon, authenticated using (true);
+create policy "Anyone can read photos" on photos for select to anon, authenticated using (true);
 
-create policy "Authenticated users can read rounds"
-  on rounds for select
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can read teams"
-  on teams for select
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can read dot_events"
-  on dot_events for select
-  to authenticated
-  using (true);
-
-create policy "Authenticated users can read photos"
-  on photos for select
-  to authenticated
-  using (true);
-
--- Authenticated users can insert their own data
-create policy "Authenticated users can insert players"
-  on players for insert
-  to authenticated
-  with check (true);
-
-create policy "Authenticated users can insert rounds"
-  on rounds for insert
-  to authenticated
-  with check (true);
-
-create policy "Authenticated users can insert teams"
-  on teams for insert
-  to authenticated
-  with check (true);
-
-create policy "Authenticated users can insert dot_events"
-  on dot_events for insert
-  to authenticated
-  with check (true);
-
-create policy "Authenticated users can insert photos"
-  on photos for insert
-  to authenticated
-  with check (true);
+-- Anon can insert/update (PIN check happens in the app)
+create policy "Anon can insert players" on players for insert to anon with check (true);
+create policy "Anon can update players" on players for update to anon using (true);
+create policy "Anon can insert rounds" on rounds for insert to anon with check (true);
+create policy "Anon can insert teams" on teams for insert to anon with check (true);
+create policy "Anon can update teams" on teams for update to anon using (true);
+create policy "Anon can insert dot_events" on dot_events for insert to anon with check (true);
+create policy "Anon can insert photos" on photos for insert to anon with check (true);
 
 -- ============================================================
 -- Realtime
@@ -120,3 +84,23 @@ create policy "Authenticated users can insert photos"
 
 alter publication supabase_realtime add table dot_events;
 alter publication supabase_realtime add table teams;
+alter publication supabase_realtime add table players;
+
+-- ============================================================
+-- Seed data — players and rounds
+-- ============================================================
+
+insert into players (name, handicap) values
+  ('Sam', 12),
+  ('Nick', 14),
+  ('Garrett', 10),
+  ('Mateen', 20),
+  ('Dean', 18),
+  ('Dan', 16),
+  ('Karmali', 22),
+  ('Hampus', 24);
+
+insert into rounds (day, format, course_name) values
+  (1, 'shamble', 'Omni National'),
+  (2, 'scramble', 'Omni International'),
+  (3, 'scramble_hybrid', 'Celebration Golf Club');
