@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 const PLAYERS = [
   { name: 'S.Kilroy', dots: 7, portrait: '/players/s_kilroy.jpg' },
@@ -29,6 +30,22 @@ export default function Home() {
         <p className="mt-3 text-[11px] tracking-[0.3em] text-white/60 font-medium">
           BIRDIES ARE RARE, BEERS ARE NOT
         </p>
+      </div>
+
+      {/* Quick links */}
+      <div className="flex justify-center gap-6 py-3 border-b border-golf-border bg-white">
+        <Link
+          href="/schedule"
+          className="text-xs tracking-wide text-golf-green font-medium hover:text-golf-dark transition-colors"
+        >
+          Schedule & Info &rarr;
+        </Link>
+        <Link
+          href="/rules"
+          className="text-xs tracking-wide text-golf-green font-medium hover:text-golf-dark transition-colors"
+        >
+          Rules &rarr;
+        </Link>
       </div>
 
       {/* Stats bar */}
