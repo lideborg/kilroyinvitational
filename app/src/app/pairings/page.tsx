@@ -15,14 +15,14 @@ type MockPlayer = {
 }
 
 const PLAYERS: MockPlayer[] = [
-  { name: 'Sam', handicap: 12 },
-  { name: 'Nick', handicap: 14 },
-  { name: 'Garrett', handicap: 10 },
-  { name: 'Mateen', handicap: 20 },
-  { name: 'Dean', handicap: 18 },
+  { name: 'S.Kilroy', handicap: 12 },
+  { name: 'N.Cafritz', handicap: 14 },
+  { name: 'G.Miller', handicap: 10 },
+  { name: 'M.Mortazavi', handicap: 20 },
+  { name: 'D.Sibrizzi', handicap: 18 },
   { name: 'Dan', handicap: 16 },
   { name: 'Karmali', handicap: 22 },
-  { name: 'Hampus', handicap: 24 },
+  { name: 'H.Lideborg', handicap: 24 },
 ]
 
 type Pairing = [MockPlayer, MockPlayer]
@@ -117,20 +117,20 @@ function TeamCard({
   const teamHcp = handicapFn(pair[0].handicap, pair[1].handicap)
 
   return (
-    <div className="rounded-lg bg-white/5 border border-white/5 px-4 py-3">
+    <div className="rounded-lg bg-golf-card border border-golf-border px-4 py-3 shadow-sm">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[11px] tracking-widest text-golf-cream/30 uppercase">
+        <span className="text-[11px] tracking-widest text-golf-muted uppercase">
           Team {teamIndex + 1}
         </span>
-        <span className="text-[11px] text-golf-gold">
+        <span className="text-[11px] text-golf-yellow">
           Team HCP {teamHcp}
         </span>
       </div>
       <div className="space-y-1">
         {pair.map((player) => (
           <div key={player.name} className="flex items-center justify-between">
-            <span className="text-sm text-golf-cream">{player.name}</span>
-            <span className="text-xs text-golf-cream/40">{player.handicap}</span>
+            <span className="text-sm text-golf-dark">{player.name}</span>
+            <span className="text-xs text-golf-muted">{player.handicap}</span>
           </div>
         ))}
       </div>
@@ -155,11 +155,11 @@ function DayCard({
 }) {
   return (
     <div
-      className={`rounded-xl overflow-hidden ${
+      className={`rounded-xl overflow-hidden shadow-sm ${
         isCurrent
-          ? 'border-l-2 border-l-golf-pink border-t border-r border-b border-white/5'
-          : 'border border-white/5'
-      } bg-white/5`}
+          ? 'border-l-2 border-l-golf-green border-t border-r border-b border-golf-border'
+          : 'border border-golf-border'
+      } bg-golf-card`}
     >
       {/* Day header */}
       <button
@@ -167,16 +167,16 @@ function DayCard({
         className="w-full flex items-center justify-between px-5 py-4 text-left cursor-pointer"
       >
         <div className="flex-1 min-w-0">
-          <h2 className="text-xs font-semibold tracking-wider text-golf-pink uppercase">
+          <h2 className="text-xs font-semibold tracking-wider text-golf-green uppercase">
             {config.title}
           </h2>
           {isExpanded && (
-            <p className="mt-1.5 text-xs text-golf-cream/40 leading-relaxed max-w-md">
+            <p className="mt-1.5 text-xs text-golf-muted leading-relaxed max-w-md">
               {config.description}
             </p>
           )}
         </div>
-        <div className="ml-3 text-golf-cream/30">
+        <div className="ml-3 text-golf-muted">
           {isExpanded ? (
             <ChevronUp className="h-4 w-4" />
           ) : (
@@ -191,7 +191,7 @@ function DayCard({
           {onRandomize && (
             <button
               onClick={onRandomize}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-golf-pink/40 text-golf-pink text-[11px] font-medium tracking-wide uppercase transition-colors hover:bg-golf-pink/10 active:scale-95 cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-golf-green/40 text-golf-green text-[11px] font-medium tracking-wide uppercase transition-colors hover:bg-golf-green/5 active:scale-95 cursor-pointer"
             >
               <Shuffle className="h-3 w-3" />
               Randomize
@@ -234,12 +234,12 @@ export default function PairingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-golf-cream">
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-transparent/90 backdrop-blur-md border-b border-white/5">
+      <header className="sticky top-0 z-40 bg-golf-cream/95 backdrop-blur-md border-b border-golf-border">
         <div className="mx-auto max-w-lg flex items-center gap-3 px-5 py-4">
-          <Users className="h-5 w-5 text-golf-pink" />
-          <h1 className="text-sm font-semibold tracking-widest text-golf-cream uppercase">
+          <Users className="h-5 w-5 text-golf-green" />
+          <h1 className="text-sm font-semibold tracking-widest text-golf-dark uppercase">
             Pairings
           </h1>
         </div>
@@ -263,7 +263,7 @@ export default function PairingsPage() {
           />
         ))}
 
-        <p className="text-center text-[11px] text-golf-cream/25 pt-2 pb-4">
+        <p className="text-center text-[11px] text-golf-muted pt-2 pb-4">
           No repeat partners across the weekend.
         </p>
       </div>

@@ -1,35 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  /* Miami Vice / Art Deco — bright, warm, pastel */
-  --golf-dark: #1A1032;
-  --golf-card: rgba(255, 255, 255, 0.06);
-  --golf-cream: #FFF8F0;
-  --golf-gold: #D4A843;
-  --golf-pink: #FF3B8B;
-  --golf-coral: #FF6B4A;
-  --golf-teal: #00E5CC;
-  --golf-purple: #8B5CF6;
-  --golf-sky: #7DD3FC;
-  --golf-peach: #FBBF7E;
-
-  /* Bright background gradient */
-  --golf-bg-from: #0F2027;
-  --golf-bg-via: #1A1040;
-  --golf-bg-to: #2C1654;
+  /* Masters-inspired palette */
+  --golf-green: #006747;
+  --golf-green-light: #1A8B6A;
+  --golf-yellow: #C8A84C;
+  --golf-white: #FFFFFF;
+  --golf-cream: #F2F0EB;
+  --golf-dark: #1C1C1E;
+  --golf-muted: #8E8E93;
+  --golf-border: #D6D3CC;
+  --golf-red: #C0392B;
+  --golf-card: #FFFFFF;
 }
 
 @theme inline {
-  --color-golf-dark: var(--golf-dark);
-  --color-golf-card: var(--golf-card);
+  --color-golf-green: var(--golf-green);
+  --color-golf-green-light: var(--golf-green-light);
+  --color-golf-yellow: var(--golf-yellow);
+  --color-golf-white: var(--golf-white);
   --color-golf-cream: var(--golf-cream);
-  --color-golf-gold: var(--golf-gold);
-  --color-golf-pink: var(--golf-pink);
-  --color-golf-coral: var(--golf-coral);
-  --color-golf-teal: var(--golf-teal);
-  --color-golf-purple: var(--golf-purple);
-  --color-golf-sky: var(--golf-sky);
-  --color-golf-peach: var(--golf-peach);
+  --color-golf-dark: var(--golf-dark);
+  --color-golf-muted: var(--golf-muted);
+  --color-golf-border: var(--golf-border);
+  --color-golf-red: var(--golf-red);
+  --color-golf-card: var(--golf-card);
 }
 
 html {
@@ -37,14 +32,13 @@ html {
 }
 
 body {
-  background: linear-gradient(135deg, var(--golf-bg-from), var(--golf-bg-via), var(--golf-bg-to));
-  background-attachment: fixed;
-  color: var(--golf-cream);
+  background-color: var(--golf-cream);
+  color: var(--golf-dark);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background-color: var(--golf-pink);
+  background-color: var(--golf-green);
   color: white;
 }

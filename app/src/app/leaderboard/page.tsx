@@ -6,14 +6,14 @@ import type { Player, Team, Round } from '@/lib/types'
 // --- Mock Data ---
 
 const mockPlayers: Player[] = [
-  { id: 'p1', name: 'Sam', handicap: 12, created_at: '' },
-  { id: 'p2', name: 'Nick', handicap: 14, created_at: '' },
-  { id: 'p3', name: 'Garrett', handicap: 10, created_at: '' },
-  { id: 'p4', name: 'Mateen', handicap: 20, created_at: '' },
-  { id: 'p5', name: 'Dean', handicap: 18, created_at: '' },
+  { id: 'p1', name: 'S.Kilroy', handicap: 12, created_at: '' },
+  { id: 'p2', name: 'N.Cafritz', handicap: 14, created_at: '' },
+  { id: 'p3', name: 'G.Miller', handicap: 10, created_at: '' },
+  { id: 'p4', name: 'M.Mortazavi', handicap: 20, created_at: '' },
+  { id: 'p5', name: 'D.Sibrizzi', handicap: 18, created_at: '' },
   { id: 'p6', name: 'Dan', handicap: 16, created_at: '' },
   { id: 'p7', name: 'Karmali', handicap: 22, created_at: '' },
-  { id: 'p8', name: 'Hampus', handicap: 24, created_at: '' },
+  { id: 'p8', name: 'H.Lideborg', handicap: 24, created_at: '' },
 ]
 
 const mockRounds: Round[] = [
@@ -140,24 +140,24 @@ export default function LeaderboardPage() {
       : null
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen bg-golf-cream">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-10 bg-[#1A1032]/80 backdrop-blur-md">
+      <div className="sticky top-0 z-10 bg-golf-cream/95 backdrop-blur-sm border-b border-golf-border">
         <div className="mx-auto max-w-lg px-4 pt-6 pb-4">
-          <h1 className="mb-4 text-center font-[family-name:var(--font-playfair)] text-2xl font-bold tracking-widest text-golf-cream">
+          <h1 className="mb-4 text-center font-[family-name:var(--font-playfair)] text-2xl font-bold tracking-widest text-golf-dark">
             LEADERBOARD
           </h1>
 
           {/* Day Selector */}
-          <div className="flex gap-1 rounded-lg bg-white/5 p-1">
+          <div className="flex gap-1 rounded-xl bg-golf-card border border-golf-border p-1">
             {tabs.map((tab) => (
               <button
                 key={tab.label}
                 onClick={() => setActiveTab(tab.value)}
-                className={`flex-1 rounded-md px-3 py-2 text-xs font-semibold tracking-wide transition-colors ${
+                className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold tracking-wide transition-colors ${
                   activeTab === tab.value
-                    ? 'bg-golf-pink/15 text-golf-pink'
-                    : 'text-golf-cream/40 hover:text-golf-cream/70'
+                    ? 'bg-golf-green text-white shadow-sm'
+                    : 'text-golf-muted hover:text-golf-dark'
                 }`}
               >
                 {tab.label}
@@ -170,12 +170,12 @@ export default function LeaderboardPage() {
       <div className="mx-auto max-w-lg px-4 pb-8">
         {/* Course & Format Subtitle */}
         {activeRound && (
-          <p className="mb-4 text-center text-xs tracking-wide text-golf-cream/35">
+          <p className="mb-4 text-center text-xs tracking-wide text-golf-muted">
             {activeRound.course_name} &middot; {formatLabels[activeRound.format]}
           </p>
         )}
         {activeTab === 'overall' && (
-          <p className="mb-4 text-center text-xs tracking-wide text-golf-cream/35">
+          <p className="mb-4 text-center text-xs tracking-wide text-golf-muted">
             Combined scores across all rounds
           </p>
         )}
@@ -185,10 +185,10 @@ export default function LeaderboardPage() {
           {standings.map((entry) => (
             <div
               key={`${entry.rank}-${entry.player1Name}`}
-              className={`rounded-lg bg-white/5 p-4 ${
+              className={`rounded-xl border bg-golf-card p-4 shadow-sm ${
                 entry.rank === 1
-                  ? 'border-l-2 border-golf-pink'
-                  : ''
+                  ? 'border-golf-green/30 border-l-3'
+                  : 'border-golf-border'
               }`}
             >
               <div className="flex items-center gap-4">
@@ -196,10 +196,10 @@ export default function LeaderboardPage() {
                 <span
                   className={`w-6 flex-shrink-0 text-center text-lg font-bold tabular-nums ${
                     entry.rank === 1
-                      ? 'text-golf-pink'
+                      ? 'text-golf-green'
                       : entry.rank <= 3
-                        ? 'text-golf-cream/60'
-                        : 'text-golf-cream/30'
+                        ? 'text-golf-dark/60'
+                        : 'text-golf-muted'
                   }`}
                 >
                   {entry.rank}
@@ -207,16 +207,16 @@ export default function LeaderboardPage() {
 
                 {/* Team Info */}
                 <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm font-medium text-golf-cream">
+                  <p className="truncate text-sm font-medium text-golf-dark">
                     {entry.player1Name}
-                    <span className="mx-1.5 text-golf-cream/25">&amp;</span>
+                    <span className="mx-1.5 text-golf-muted">&amp;</span>
                     {entry.player2Name}
                   </p>
                   <div className="mt-1 flex items-center gap-2">
-                    <span className="text-[10px] font-medium uppercase tracking-wider text-golf-pink/60">
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-golf-green">
                       {entry.format}
                     </span>
-                    <span className="text-[10px] text-golf-cream/25">
+                    <span className="text-[10px] text-golf-muted">
                       Gross {entry.grossScore}
                     </span>
                   </div>
@@ -226,12 +226,12 @@ export default function LeaderboardPage() {
                 <div className="flex flex-col items-end flex-shrink-0">
                   <span
                     className={`text-xl font-bold tabular-nums ${
-                      entry.rank === 1 ? 'text-golf-gold' : 'text-golf-cream'
+                      entry.rank === 1 ? 'text-golf-green' : 'text-golf-dark'
                     }`}
                   >
                     {entry.netScore}
                   </span>
-                  <span className="text-[10px] uppercase tracking-wider text-golf-cream/30">
+                  <span className="text-[10px] uppercase tracking-wider text-golf-muted">
                     Net
                   </span>
                 </div>
