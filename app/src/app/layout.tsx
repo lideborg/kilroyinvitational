@@ -16,6 +16,18 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   title: "The Kilroy Invitational",
   description: "Birdies are rare, beers are not. Est. 2026",
+  openGraph: {
+    title: "The Kilroy Invitational",
+    description: "Birdies are rare, beers are not. Orlando, FL · May 2026",
+    images: [{ url: "/og-image.png", width: 1024, height: 1024 }],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "The Kilroy Invitational",
+    description: "Birdies are rare, beers are not. Orlando, FL · May 2026",
+    images: ["/og-image.png"],
+  },
 };
 
 export const viewport: Viewport = {
